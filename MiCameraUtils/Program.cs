@@ -1,5 +1,11 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.Text;
+
+// 设置控制台编码为 UTF-8，以支持 Unicode 字符（如表情符号）
+Console.OutputEncoding = Encoding.UTF8;
+Console.InputEncoding = Encoding.UTF8;
+
 try
 {
     // 显示欢迎横幅
@@ -81,7 +87,7 @@ try
     if (confirm == "✅ 是的，开始处理")
     {
         AnsiConsole.MarkupLine("[bold green]开始处理...[/]");
-        
+
         switch (appSettings.Mode)
         {
             case MergeMode.MergeFromCamera:
@@ -97,7 +103,7 @@ try
                 await acceleratedMerger.MergeAsync();
                 break;
         }
-        
+
         ShowCompletionMessage();
     }
     else
@@ -106,7 +112,7 @@ try
     }
 
     finishedRunning = true;
-    
+
     AnsiConsole.MarkupLine("[dim]按任意键退出...[/]");
     Console.ReadLine();
 }
@@ -139,7 +145,7 @@ static void ShowWelcomeBanner()
     var rule = new Rule("[bold blue]Mi Camera Utils[/]");
     rule.Justification = Justify.Center;
     AnsiConsole.Write(rule);
-    
+
     AnsiConsole.MarkupLine("[dim]小米摄像头工具 - 用于合并视频, 制作倍速视频[/]");
     AnsiConsole.MarkupLine("[dim]版本: 1.0.0[/]");
     AnsiConsole.WriteLine();
@@ -165,12 +171,12 @@ static void DisplayConfiguration(AppSettings appSettings)
     table.AddColumn("[bold]值[/]");
     table.Border(TableBorder.Rounded);
     table.Title("[bold cyan]当前配置[/]");
-    
+
     table.AddRow("摄像机目录", $"[green]{appSettings.CameraDirectory}[/]");
     table.AddRow("输出目录", $"[green]{appSettings.OutputDirectory}[/]");
     table.AddRow("线程数", $"[yellow]{appSettings.ThreadsCount}[/]");
     table.AddRow("覆盖同名文件", $"[{(appSettings.OverwriteOutput ? "green" : "red")}]{(appSettings.OverwriteOutput ? "是" : "否")}[/]");
-    
+
     AnsiConsole.Write(table);
     AnsiConsole.WriteLine();
 }
@@ -178,7 +184,7 @@ static void DisplayConfiguration(AppSettings appSettings)
 static async Task DownloadFFmpegWithProgress()
 {
     await AnsiConsole.Progress()
-        .Columns(new ProgressColumn[] 
+        .Columns(new ProgressColumn[]
         {
             new TaskDescriptionColumn(),
             new ProgressBarColumn(),
@@ -189,7 +195,7 @@ static async Task DownloadFFmpegWithProgress()
         {
             var task = ctx.AddTask("[green]下载 FFmpeg[/]");
             task.MaxValue = 100;
-            
+
             try
             {
                 // 尝试下载 FFmpeg
@@ -198,15 +204,15 @@ static async Task DownloadFFmpegWithProgress()
                     task.Value = i;
                     await Task.Delay(100);
                 }
-                
+
                 await FFmpegDownloader.GetLatestVersion(FFmpegVersion.Official);
-                
+
                 for (int i = 60; i <= 100; i += 10)
                 {
                     task.Value = i;
                     await Task.Delay(100);
                 }
-                
+
                 task.Value = 100;
                 AnsiConsole.MarkupLine("[green]✓[/] FFmpeg 下载完成");
             }
@@ -217,7 +223,7 @@ static async Task DownloadFFmpegWithProgress()
                 AnsiConsole.MarkupLine("[dim]如果系统已安装 FFmpeg，可以忽略此警告[/]");
             }
         });
-    
+
     AnsiConsole.WriteLine();
 }
 
@@ -226,7 +232,7 @@ static void ShowCompletionMessage()
     var panel = new Panel("[bold green]✓ 所有任务已完成![/]")
         .Border(BoxBorder.Rounded)
         .BorderColor(Color.Green);
-    
+
     AnsiConsole.Write(panel);
     AnsiConsole.WriteLine();
 }
